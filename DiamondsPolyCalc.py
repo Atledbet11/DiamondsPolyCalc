@@ -1,7 +1,10 @@
+import regex as regex
 from sympy import *
+import fractions
+import re
 
 measure = {
-    1: [1],
+    1: [1,3],
     2: [1,5,13],
     3: [1,7,25,63],
     4: [1,9,41,129,321],
@@ -10,8 +13,40 @@ measure = {
     7: [1,15,113,575,2241,7183,19825,48639],
     8: [1,17,145,833,3649,13073,40081,108545,265729],
     9: [1,19,181,1159,5641,22363,75517,224143,598417,1462563],
-    10: [1,21,221,1561,8361,36365,134245,433905,1256465,3317445,8097453]
+    10: [1,21,221,1561,8361,36365,134245,433905,1256465,3317445,8097453],
+    11: [1,23,265,2047,11969,56695,227305,795455,2485825,7059735,18474633,45046719]
 }
+
+def bernoulliTriangleBuilder(dimension):
+
+    # Declare output list
+    outputList = []
+
+    # For I less than the dimension size
+    for i in range(dimension):
+
+        # Define a temporary holding list
+        tempList = []
+
+        # For j less than the size I
+        for j in range(i+1):
+
+            # If j is the first or last element in the array.
+            if j == i or j == 0:
+
+                # Append a 1 to the list
+                tempList.append(1)
+
+            # Otherwise Calculate the value
+            else:
+
+                # The value is always the previous entry in the outputlist of j + j-1
+                tempList.append(outputList[i-1][j] + outputList[i-1][j-1])
+
+        # Append the row to the list.
+        outputList.append(tempList)
+
+    return outputList
 
 def buildMatrix(dimension):
 
@@ -40,11 +75,23 @@ def buildMatrix(dimension):
 
 def main():
 
-    matrix = buildMatrix(10)
+    dim = 11
 
-    print(str(matrix))
+    matrix = Matrix(buildMatrix(dim))
 
-    print(str(matrix.rref()))
+    matrix = matrix.rref()
+
+    print(str(matrix[0].col(-1)))
+
+    q = matrix[0].col(-1)
+
+    q = re.sub('([A-z()])', '', str(q)).split()
+
+    print(q)
+
+    lines = bernoulliTriangleBuilder(dim)
+
+    print(str(lines))
 
 
 
